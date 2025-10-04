@@ -25,6 +25,7 @@ The architecture includes patch embedding, multi-head self-attention, MLP layers
 
 ### Results
 - Achieved **~84.95% accuracy** on CIFAR-10 test set after 100 epochs.
+- On second run achieved **~ 85.82% accuracy** on CIFAR-10 test set after 150 epochs.
 
 ### How to Run
 1. Install dependencies:
