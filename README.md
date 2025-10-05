@@ -4,33 +4,111 @@ This repository contains two Colab notebooks:
 1. **Q1** – Vision Transformer on CIFAR-10  
 2. **Q2** – Text-Driven Image & Video Segmentation  
 
-## 📌 Q1 – Vision Transformer on CIFAR-10
+# 🧠 Vision Transformer (ViT) for CIFAR-10 Classification
 
-### Overview
-This notebook implements a **Vision Transformer (ViT)** from scratch and trains it on the **CIFAR-10 dataset**.  
-The architecture includes patch embedding, multi-head self-attention, MLP layers, and stochastic depth for regularization.
+This project implements a **Vision Transformer (ViT)** from scratch using **PyTorch** and trains it on the **CIFAR-10** dataset to classify 10 image classes.  
+The implementation follows the core ViT architecture:
+- Image patchification  
+- Learnable positional embeddings  
+- A prepended `[CLS]` token for classification  
+- Stacked Transformer Encoder blocks (Multi-Head Self-Attention + MLP with residual connections and layer normalization)
 
-### Features
-- Custom implementations of:
-  - Patch Embedding
-  - Multi-Head Self-Attention
-  - Transformer Encoder Block
-  - Vision Transformer classifier
-- Data augmentation with AutoAugment and normalization
-- CIFAR-10 dataset loaders for training/testing
-- Training loop with:
-  - Warm-up learning rate scheduling (first 5 epochs)
-  - Cosine Annealing scheduler
-- Evaluation after each epoch
+---
 
-### Results
-- Achieved **~84.95% accuracy** on CIFAR-10 test set after 100 epochs.
-- On second run achieved **~ 85.82% accuracy** on CIFAR-10 test set after 150 epochs.
+## 🚀 How to Run in Google Colab
 
-### How to Run
-1. Install dependencies:
-   ```bash
-   pip install torch torchvision tqdm
+1. **Open Google Colab**  
+   Navigate to [Google Colab](https://colab.research.google.com) and create a new **Python 3** notebook.
+
+2. **Upload the Code**  
+   Copy the entire Python script (`q1.ipynb` content) into a single code cell in your Colab notebook.
+
+3. **Enable GPU**  
+   Go to **Runtime → Change runtime type** → Select **GPU** (e.g., T4 or P100).
+
+4. **Install/Import Dependencies**  
+   The code imports all required libraries:  
+   `torch`, `torchvision`, `tqdm`, `numpy`, `matplotlib`, `seaborn`, `sklearn`.  
+   Run the cell to install/import all dependencies and define the model architecture.
+
+5. **Run the Training**  
+   Execute the main code cell. The `if __name__ == '__main__':` block will:
+   - Initialize the model and data loaders (downloads CIFAR-10 if needed)  
+   - Train for **150 epochs** with **early stopping (patience = 20)**  
+   - Automatically save the best model checkpoint as **`best_vit_cifar10_checkpoint.pth`**  
+   - Print final accuracy and display the **Confusion Matrix**
+
+---
+
+## ⚙️ Best Model Configuration (CFG Class)
+
+| Parameter | Value | Description |
+|------------|--------|-------------|
+| `img_size` | 32 | CIFAR-10 image size (32×32) |
+| `patch_size` | 4 | Patch size (4×4) → 8×8 = 64 patches |
+| `embed_dim` | 512 | Embedding dimension |
+| `depth` | 6 | Number of Transformer Encoder blocks |
+| `num_heads` | 8 | Attention heads in MHSA |
+| `mlp_ratio` | 4.0 | MLP hidden layer expansion (512×4 = 2048) |
+| `batch_size` | 256 | Batch size |
+| `epochs` | 150 | Max training epochs |
+| `lr` | 3e-4 | Learning rate (AdamW) |
+| `weight_decay` | 0.05 | Weight decay for regularization |
+| **Loss** | CrossEntropyLoss (Label Smoothing = 0.1) | Classification loss |
+| **Augmentations** | TrivialAugmentWide, RandomHorizontalFlip, RandomErasing (p=0.1) | Data augmentation |
+| **Regularization** | MixUp (α=0.8), DropPath (0.1), Dropout (0.1) | Regularization methods |
+
+---
+
+## 📈 Results
+
+The Vision Transformer was trained for up to **150 epochs** on CIFAR-10 with the configuration above.
+
+| Metric | Value |
+|---------|--------|
+| **Overall Test Accuracy** | **85.82%** |
+| **Total Trainable Parameters** | **18,979,338** |
+
+---
+
+## 💡 Concise Analysis (Bonus)
+
+The final accuracy of **85.82%** for a moderate-sized ViT-Base model (≈19M parameters) demonstrates how well ViTs can perform even on small datasets like CIFAR-10 when combined with strong regularization and optimization.
+
+### Key Insights
+
+- **Patch Size (4×4)**  
+  Small patch sizes (→ 64 patches) retain fine-grained spatial details — critical for CIFAR-10’s 32×32 images where convolutional inductive biases are absent.
+
+- **Regularization (MixUp / Label Smoothing / DropPath)**  
+  ViTs tend to overfit small datasets. Using these three together:
+  - **MixUp (α=0.8)** blends images and labels  
+  - **Label Smoothing (0.1)** reduces overconfidence  
+  - **DropPath (0.1)** encourages redundant representations across layers  
+
+  → This synergy was essential for better generalization.
+
+- **Optimization**  
+  - **AdamW** optimizer for decoupled weight decay  
+  - **Cosine Annealing LR Scheduler** for smooth decay  
+  - **PyTorch AMP (FP16)** for faster mixed-precision training on Colab GPU  
+
+Together, these techniques yield robust convergence and strong test-time generalization.
+
+---
+
+## 🏁 Checkpoints and Outputs
+-  `best_vit_cifar10_checkpoint.pth` → Best model weights  
+-   Confusion Matrix → Displayed at the end of training  
+-   Training Logs → Printed via `tqdm` progress bars  
+-   Accuracy curves → Optional Matplotlib visualization  
+
+---  
+> **Dataset:** CIFAR-10 (Krizhevsky, 2009)  
+> **Framework:** PyTorch  
+> **License:** MIT License
+
+
 
 ## 📌 Q2 Zero-Shot Video Object Segmentation
 
