@@ -1,4 +1,4 @@
-# Project README
+# AIRL ASSIGNMENT
 
 This repository contains two Colab notebooks:
 1. **Q1** – Vision Transformer on CIFAR-10  
