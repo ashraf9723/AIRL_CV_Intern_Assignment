@@ -3,7 +3,7 @@
 This repository contains two Colab notebooks:
 1. **Q1** – Vision Transformer on CIFAR-10  
 2. **Q2** – Text-Driven Image & Video Segmentation
-3. **NOte :** -   Q2 ipynb is not showing either you can go throw pdf format or download the notebook and check it .
+3. **Note :** -   Q2 ipynb is not showing either you can go throw pdf format or download the notebook and check it .
 
 # 🧠 Vision Transformer (ViT) for CIFAR-10 Classification
 
